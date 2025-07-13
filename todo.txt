@@ -1,0 +1,8 @@
+- Mongodb
+- Authjs
+- Server action for saving tasks
+- Email reminder function
+- Cron job
+- Server action for getting tasks
+- Client side
+- Deploy + buy domain
