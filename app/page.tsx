@@ -5,7 +5,7 @@ export default async function Home() {
 
   return (
     <div className="">
-      {/* <span>{session && session.user?.email}</span> */}
+      <span>{session && session.user?.email}</span>
       <ClientDashboard />
     </div>
   );

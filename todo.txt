@@ -1,8 +1,9 @@
-- Mongodb
-- Authjs
+- Mongodb done
+- Authjs 
 - Server action for saving tasks
 - Email reminder function
 - Cron job
 - Server action for getting tasks
 - Client side
-- Deploy + buy domain
+- Deploy + buy domain (see if email is cheap)
+- Change nodemailer email

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { IoMdClose } from "react-icons/io";
+import { sendMagicLink } from "../actions/magicLinks";
 
 interface LoginPopupProps {
   isOpen: boolean;
@@ -15,26 +16,25 @@ export default function LoginPopup({ isOpen, onClose }: LoginPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleMagicLinkSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleMagicLinkSignIn = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
     setIsSubmitting(true);
     setMessage("");
-    // try {
-    //   const res = await signIn("email", {
-    //     email,
-    //     redirect: false,
-    //   });
-    //   if (res?.ok) {
-    //     setMessage("Check your email for a magic link to sign in!");
-    //     setEmail("");
-    //   } else {
-    //     setMessage(res?.error || "An error occurred. Please try again.");
-    //   }
-    // } catch {
-    //   setMessage("An unexpected error occurred.");
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+
+    const result = await sendMagicLink(email);
+
+    if (result.success) {
+      setMessage(result.message);
+    } else {
+      setMessage(result.message);
+    }
+
+    setIsSubmitting(false);
   };
 
   if (!isOpen) return null;
@@ -79,6 +79,7 @@ export default function LoginPopup({ isOpen, onClose }: LoginPopupProps) {
             <input
               type="email"
               value={email}
+              name="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
               required
