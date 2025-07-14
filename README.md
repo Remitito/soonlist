@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Soonlist
 
-## Getting Started
+🚧 **This project is currently in development.** 🚧
 
-First, run the development server:
+**Your simple deadline list with just the reminders you need..**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Soonlist is a minimalist, single-purpose web application designed to do one thing exceptionally well: remind you of upcoming deadlines. Built for users who feel overwhelmed by complex to-do lists and project management software, Soonlist provides a clean, single-list view of your tasks, sorted by urgency.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## The Philosophy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+In a world of feature-bloated productivity apps, Soonlist is an experiment in radical simplicity. The core workflow is designed to be frictionless:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Add a task** in a single input box.
+2.  **Pick a deadline** from a calendar.
+3.  **Choose when to be reminded** (1, 3, or 7 days before).
 
-## Learn More
+That's it. No multiple lists, no sub-tasks, no priorities, no tags. Just a clear, chronological list of what's next.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is being built with a modern, full-stack TypeScript architecture.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   **Framework**: [Next.js](https://nextjs.org/) (App Router)
+*   **Authentication**: [Auth.js](https://authjs.dev/) (with Google & Magic Link providers)
+*   **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas)
+*   **ODM / DB Client**: [Mongoose](https://mongoosejs.com/) / [Prisma](https://www.prisma.io/) *(Choose one and delete the other)*
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Scheduled Jobs**: [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs) for sending reminders
