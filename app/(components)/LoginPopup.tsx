@@ -7,11 +7,14 @@ import { IoMdClose } from "react-icons/io";
 import { sendMagicLink } from "../actions/magicLinks";
 
 interface LoginPopupProps {
-  isOpen: boolean;
+  loginPopupIsOpen: boolean;
   onClose: () => void;
 }
 
-export default function LoginPopup({ isOpen, onClose }: LoginPopupProps) {
+export default function LoginPopup({
+  loginPopupIsOpen,
+  onClose,
+}: LoginPopupProps) {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -37,7 +40,7 @@ export default function LoginPopup({ isOpen, onClose }: LoginPopupProps) {
     setIsSubmitting(false);
   };
 
-  if (!isOpen) return null;
+  if (!loginPopupIsOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
