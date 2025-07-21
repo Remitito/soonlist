@@ -2,13 +2,31 @@
 
 import React, { useState, useRef } from "react";
 import { createTask } from "../actions/createTask";
+import { FiSave } from "react-icons/fi";
+
+const containerStyles = "w-full mx-auto bg-gray-100 shadow-sm p-6 md:p-8";
+const headingStyles = "text-2xl font-bold text-gray-800 text-center mb-8";
+const formContainerStyles =
+  "flex flex-col md:flex-row items-center md:items-end justify-center gap-6";
+const formGroupStyles = "w-full flex flex-col";
+const labelStyles = "text-sm text-center font-medium text-gray-600 mb-2";
+const inputStyles = `
+  bg-white border border-gray-300 text-gray-800 text-sm rounded-lg 
+  focus:ring-green-500 focus:border-green-500 block w-full p-2.5 
+  placeholder:text-gray-400
+`;
+const buttonWrapperStyles = "mt-8 flex justify-center";
+const buttonStyles = `
+  flex items-center gap-2 px-7 py-2.5 text-white bg-green-500 
+  font-semibold rounded-full shadow-md hover:bg-green-600 
+  focus:outline-none focus:ring-4 focus:ring-green-300 
+  disabled:bg-gray-400 disabled:cursor-not-allowed
+  transition-all duration-300 cursor-pointer
+`;
 
 const TaskForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const inputStyles =
-    "p-2 bg-background border border-input-border rounded-md text-main-text placeholder:text-secondary-text focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent transition-all duration-200";
 
   const formAction = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -18,79 +36,76 @@ const TaskForm = () => {
   };
 
   return (
-    <div className="">
-      <form ref={formRef} action={formAction} className=" p-6 space-y-6">
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-main-text mb-1"
-          >
-            Task Details
-          </label>
-          <input
-            id="description"
-            type="text"
-            name="description"
-            placeholder="e.g., Finalize project report"
-            required
-            className={`w-full ${inputStyles}`}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label
-              htmlFor="deadline"
-              className="block text-sm font-medium text-main-text mb-1"
-            >
-              Deadline
+    <div className={containerStyles}>
+      <h2 className={headingStyles}>
+        Create a new task and setup email reminders in seconds...
+      </h2>
+      <form ref={formRef} className="w-full" action={formAction}>
+        <div className={formContainerStyles}>
+          <div className={`${formGroupStyles} md:w-2/5`}>
+            <label htmlFor="description" className={labelStyles}>
+              Task Description
             </label>
             <input
-              id="deadline"
-              type="date"
-              name="deadline"
+              id="description"
+              type="text"
+              name="description"
+              placeholder="Cancel trial / Submit thesis"
               required
-              className={`w-full ${inputStyles}`}
+              className={inputStyles}
             />
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-main-text mb-1">
-              Email Reminder (days before)
+          <div className={`${formGroupStyles} md:w-auto`}>
+            <label htmlFor="deadline" className={labelStyles}>
+              Deadline Date
             </label>
-            <fieldset className="flex items-center gap-6 pt-2">
-              <legend className="sr-only">Reminders</legend>
-              {[1, 3, 7].map((day) => (
-                <div key={day} className="flex items-center gap-2">
+            <div className="relative w-full">
+              <input
+                id="deadline"
+                type="date"
+                name="deadline"
+                required
+                className={`${inputStyles} pr-10`}
+              />
+            </div>
+          </div>
+
+          <fieldset className={`${formGroupStyles} md:w-auto`}>
+            <legend className={labelStyles}>Remind me ___ before...</legend>
+            <div className="flex flex-wrap justify-center items-center gap-4 min-h-[42px]">
+              {[
+                { day: 1, label: "1 day" },
+                { day: 3, label: "3 days" },
+                { day: 7, label: "7 days" },
+              ].map(({ day, label }) => (
+                <div key={day} className="flex items-center gap-1.5">
                   <input
                     type="checkbox"
                     id={`remind${day}`}
                     name={`remindBefore${day}Days`}
-                    className="h-4 w-4 rounded border-primary-border text-button-primary accent-button-primary focus:ring-highlight"
+                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
                   />
                   <label
                     htmlFor={`remind${day}`}
-                    className="text-sm text-secondary-text"
+                    className="text-sm text-gray-600"
                   >
-                    {day}d
+                    {label}
                   </label>
                 </div>
               ))}
-            </fieldset>
-          </div>
+            </div>
+          </fieldset>
         </div>
 
-        <div className="flex justify-end pt-2">
+        <div className={buttonWrapperStyles}>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-2 font-semibold text-text-on-primary bg-button-primary rounded-md
-                       hover:bg-button-primary-hover
-                       focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-container
-                       disabled:bg-disabled-bg disabled:text-disabled-text disabled:cursor-not-allowed
-                       transition-colors duration-200"
+            className={buttonStyles}
           >
-            {isSubmitting ? "Saving..." : "Save Task"}
+            <FiSave className="w-5 h-5" />
+            {isSubmitting ? "Saving..." : "Save"}
           </button>
         </div>
       </form>

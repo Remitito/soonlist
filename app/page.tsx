@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { getTasks } from "./actions/getTasks";
 import TaskForm from "./(components)/TaskForm";
-import TaskTable from "./(components)/TaskTable";
+import ActiveTasks from "./(components)/ActiveTasks";
 import Navbar from "./(components)/Navbar";
 
 export default async function Home() {
@@ -13,9 +13,9 @@ export default async function Home() {
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <Navbar loggedIn={session ? true : false} />
-      <div className="w-4/5 text-flex flex-col justify-center items-center">
+      <div className="w-full text-flex flex-col justify-center items-center">
         <TaskForm />
-        <TaskTable tasks={tasks} />
+        <ActiveTasks tasks={tasks} />
       </div>
     </div>
   );
