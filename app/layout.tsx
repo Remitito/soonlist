@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./(components)/Navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { inter } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Soonlist",
@@ -26,12 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen flex justify-center flex-col`}
+        className={`${inter.className} text-main-text bg-background antialiased w-screen flex justify-center flex-col`}
       >
-        <Navbar />
-        <div className="flex w-full items-center justify-centre">
-          {children}
-        </div>
+        <div className="flex w-full justify-center">{children}</div>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 - Mongodb done
 - Authjs done
-- Server action for saving tasks
-- Server action for getting tasks
+- Server action for saving tasks done
+- Server action for getting tasks done
 - Client side
 - Email reminder function
 - Cron job
