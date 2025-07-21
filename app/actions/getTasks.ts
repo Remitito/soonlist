@@ -5,6 +5,7 @@ import Task from "@/lib/models/Task";
 import { Types } from "mongoose";
 
 export type ProcessedTask = {
+  _id: string;
   description: string;
   completed: boolean;
   deadline: string;
@@ -28,6 +29,7 @@ export async function getTasks(
     }
 
     const processedTasks: ProcessedTask[] = tasks.map((task) => ({
+      _id: task._id.toString(),
       description: task.description,
       completed: task.completed,
       deadline: task.deadline.toISOString(),
