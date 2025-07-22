@@ -14,7 +14,7 @@ export default async function Home() {
     <div className="w-full flex flex-col justify-center items-center">
       <Navbar loggedIn={session ? true : false} />
       <div className="w-full text-flex flex-col justify-center items-center">
-        <TaskForm />
+        <TaskForm loggedIn={session ? true : false} />
         <ActiveTasks tasks={tasks} />
       </div>
     </div>

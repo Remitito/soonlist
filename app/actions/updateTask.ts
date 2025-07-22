@@ -27,12 +27,6 @@ export async function updateTask(
     return { message: "Error: Authentication required." };
   }
 
-  console.log("--- DEBUGGING UPDATE TASK ---");
-  console.log("1. Received Task ID (from client):", taskId);
-  console.log("   Type of Task ID:", typeof taskId);
-  console.log("2. Session User ID (from auth):", session.user.id);
-  console.log("   Type of User ID:", typeof session.user.id);
-
   try {
     await dbConnect();
 
