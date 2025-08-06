@@ -7,6 +7,7 @@ import { deleteTask } from "../actions/deleteTask";
 import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
 import StatusPopup from "./StatusPopup";
 import DecisionPopup from "./DecisionPopup";
+import { getDaysUntilDeadline } from "../utils/All";
 
 type TaskWithStatus = ProcessedTask & {
   isDirty: boolean;
@@ -29,7 +30,9 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
   } | null>(null);
   const [deletionTargetId, setDeletionTargetId] = useState<string | null>(null);
 
-  const todayString = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowString = tomorrow.toISOString().split("T")[0];
   const inputStyle =
     "w-full border border-gray-300 rounded-xl text-sm p-2 bg-white";
 
@@ -66,6 +69,20 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       ...updatedTasks[index],
       [field]: value,
     };
+
+    if (field === "deadline" && typeof value === "string") {
+      const daysUntilDeadline = getDaysUntilDeadline(value);
+
+      if (daysUntilDeadline <= 1) {
+        updatedTask.remindBefore1Days = false;
+      }
+      if (daysUntilDeadline < 3) {
+        updatedTask.remindBefore3Days = false;
+      }
+      if (daysUntilDeadline < 7) {
+        updatedTask.remindBefore7Days = false;
+      }
+    }
 
     const isDirty = checkIsDirty(
       updatedTask,
@@ -202,11 +219,11 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                   id={`date-${task._id}`}
                   type="date"
                   className={inputStyle}
-                  min={todayString}
+                  min={tomorrowString}
                   value={task.deadline.slice(0, 10)}
-                  onChange={(e) =>
-                    updateTaskField(index, "deadline", e.target.value)
-                  }
+                  onChange={(e) => {
+                    updateTaskField(index, "deadline", e.target.value);
+                  }}
                 />
               </div>
               <div className="flex flex-col md:col-span-2 lg:col-span-1">
@@ -214,48 +231,37 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                   Reminders
                 </label>
                 <div className="flex flex-row flex-wrap gap-x-4 gap-y-2 items-center min-h-[40px]">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={task.remindBefore1Days}
-                      onChange={(e) =>
-                        updateTaskField(
-                          index,
-                          "remindBefore1Days",
-                          e.target.checked
-                        )
-                      }
-                    />{" "}
-                    1 Day
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={task.remindBefore3Days}
-                      onChange={(e) =>
-                        updateTaskField(
-                          index,
-                          "remindBefore3Days",
-                          e.target.checked
-                        )
-                      }
-                    />{" "}
-                    3 Days
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={task.remindBefore7Days}
-                      onChange={(e) =>
-                        updateTaskField(
-                          index,
-                          "remindBefore7Days",
-                          e.target.checked
-                        )
-                      }
-                    />{" "}
-                    7 Days
-                  </label>
+                  {[1, 3, 7].map((day) => {
+                    const fieldName = `remindBefore${day}Days`;
+                    const daysUntilDeadline = getDaysUntilDeadline(
+                      task.deadline
+                    );
+                    const isDisabled =
+                      daysUntilDeadline < day ||
+                      (day === 1 && daysUntilDeadline === 1);
+                    return (
+                      <label
+                        key={day}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            task[fieldName as keyof ProcessedTask] as boolean
+                          }
+                          disabled={isDisabled}
+                          onChange={(e) =>
+                            updateTaskField(
+                              index,
+                              fieldName as keyof ProcessedTask,
+                              e.target.checked
+                            )
+                          }
+                        />
+                        {day} Day{day > 1 ? "s" : ""}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -274,7 +280,9 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                 <FaEdit />
                 {isSubmitting.id === task._id && isSubmitting.action === "save"
                   ? "Saving..."
-                  : "Save"}
+                  : task.isDirty
+                  ? "Save"
+                  : "Saved"}
               </button>
               <button
                 onClick={() => handleComplete(index)}

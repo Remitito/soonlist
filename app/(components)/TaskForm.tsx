@@ -33,10 +33,12 @@ interface TaskFormProps {
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
-  const todayString = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowString = tomorrow.toISOString().split("T")[0];
 
   const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState(todayString);
+  const [deadline, setDeadline] = useState(tomorrowString);
   const [reminders, setReminders] = useState<{ [key: number]: boolean }>({
     1: false,
     3: false,
@@ -79,7 +81,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
 
     if (result.message.startsWith("Success")) {
       setDescription("");
-      setDeadline(todayString);
+      setDeadline(tomorrowString);
       setReminders({ 1: false, 3: false, 7: false });
       localStorage.removeItem("taskFormDraft");
     }
@@ -91,7 +93,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
       const { description, deadline, reminders, date } = JSON.parse(saved);
       if (checkIfToday(date)) {
         setDescription(description || "");
-        setDeadline(deadline || todayString);
+        setDeadline(deadline || tomorrowString);
         setReminders(reminders || { 1: false, 3: false, 7: false });
       }
     }
@@ -161,7 +163,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             required
-            min={todayString}
+            min={tomorrowString}
             className={`${inputStyles} pr-10`}
           />
         </div>
@@ -170,7 +172,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
           <legend className={labelStyles}>Remind me ___ before...</legend>
           <div className="flex flex-wrap justify-center items-center gap-4 min-h-[42px]">
             {[1, 3, 7].map((day) => {
-              const isDisabled = daysUntilDeadline < day;
+              const isDisabled =
+                daysUntilDeadline < day ||
+                (day === 1 && daysUntilDeadline === 1);
               return (
                 <div key={day} className="flex items-center gap-1.5">
                   <input

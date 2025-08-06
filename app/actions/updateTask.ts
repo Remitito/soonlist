@@ -5,6 +5,7 @@ import dbConnect from "@/lib/dbConnect";
 import Task from "@/lib/models/Task";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
+import { getDaysUntilDeadline } from "../utils/All";
 
 export type FormState = {
   message: string;
@@ -42,27 +43,28 @@ export async function updateTask(
       };
     }
 
+    const daysBeforeDeadline = getDaysUntilDeadline(data.deadline);
     const updateData = {
       description: data.description,
       deadline: data.deadline,
       completed: data.completed,
-      remindBefore1Day: {
-        remind: data.remindBefore1Days,
-        // Reset 'done' only if user is enabling a reminder that was previously disabled
+
+      remindBefore1Days: {
+        remind: daysBeforeDeadline < 1 ? false : data.remindBefore1Days,
         done:
           data.remindBefore1Days && !currentTask.remindBefore1Days.remind
             ? false
             : currentTask.remindBefore1Days.done,
       },
       remindBefore3Days: {
-        remind: data.remindBefore3Days,
+        remind: daysBeforeDeadline < 3 ? false : data.remindBefore3Days,
         done:
           data.remindBefore3Days && !currentTask.remindBefore3Days.remind
             ? false
             : currentTask.remindBefore3Days.done,
       },
       remindBefore7Days: {
-        remind: data.remindBefore7Days,
+        remind: daysBeforeDeadline < 7 ? false : data.remindBefore7Days,
         done:
           data.remindBefore7Days && !currentTask.remindBefore7Days.remind
             ? false
