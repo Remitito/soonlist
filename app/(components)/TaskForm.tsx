@@ -5,9 +5,11 @@ import { createTask } from "../actions/createTask";
 import { FiSave } from "react-icons/fi";
 import StatusPopup from "./StatusPopup";
 import LoginPopup from "./LoginPopup";
+import { checkIfToday, getDaysUntilDeadline } from "../utils/All";
 
 const containerStyles = "w-full mx-auto bg-gray-100 shadow-sm p-6 md:p-8";
-const headingStyles = "text-2xl font-bold text-gray-800 text-center mb-8";
+const headingStyles =
+  "text-xl md:text-2xl font-bold text-gray-800 text-center mb-8";
 const formContainerStyles =
   "flex flex-col md:flex-row items-center md:items-end justify-center gap-6";
 const formGroupStyles = "w-full flex flex-col";
@@ -43,6 +45,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginPopupIsOpen, setLoginPopupIsOpen] = useState(false);
+  const daysUntilDeadline = getDaysUntilDeadline(deadline);
 
   const [statusPopup, setStatusPopup] = useState<{
     message: string;
@@ -85,17 +88,36 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
   useEffect(() => {
     const saved = localStorage.getItem("taskFormDraft");
     if (saved) {
-      const { description, deadline, reminders } = JSON.parse(saved);
-      setDescription(description || "");
-      setDeadline(deadline || todayString);
-      setReminders(reminders || { 1: false, 3: false, 7: false });
+      const { description, deadline, reminders, date } = JSON.parse(saved);
+      if (checkIfToday(date)) {
+        setDescription(description || "");
+        setDeadline(deadline || todayString);
+        setReminders(reminders || { 1: false, 3: false, 7: false });
+      }
     }
   }, []);
 
   useEffect(() => {
-    const draft = { description, deadline, reminders };
+    const date = new Date();
+    const draft = { description, deadline, reminders, date };
     localStorage.setItem("taskFormDraft", JSON.stringify(draft));
   }, [description, deadline, reminders]);
+
+  useEffect(() => {
+    setReminders((prev) => {
+      const updated = { ...prev };
+      let hasChanges = false;
+
+      [1, 3, 7].forEach((day) => {
+        if (daysUntilDeadline < day && prev[day]) {
+          updated[day] = false;
+          hasChanges = true;
+        }
+      });
+
+      return hasChanges ? updated : prev;
+    });
+  }, [deadline]);
 
   return (
     <div className={containerStyles}>
@@ -147,29 +169,35 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
         <fieldset className={`${formGroupStyles} md:w-auto`}>
           <legend className={labelStyles}>Remind me ___ before...</legend>
           <div className="flex flex-wrap justify-center items-center gap-4 min-h-[42px]">
-            {[1, 3, 7].map((day) => (
-              <div key={day} className="flex items-center gap-1.5">
-                <input
-                  type="checkbox"
-                  id={`remind${day}`}
-                  name={`remindBefore${day}Days`}
-                  checked={reminders[day]}
-                  onChange={() =>
-                    setReminders((prev) => ({
-                      ...prev,
-                      [day]: !prev[day],
-                    }))
-                  }
-                  className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
-                />
-                <label
-                  htmlFor={`remind${day}`}
-                  className="text-sm text-gray-600"
-                >
-                  {day} day{day > 1 && "s"}
-                </label>
-              </div>
-            ))}
+            {[1, 3, 7].map((day) => {
+              const isDisabled = daysUntilDeadline < day;
+              return (
+                <div key={day} className="flex items-center gap-1.5">
+                  <input
+                    type="checkbox"
+                    id={`remind${day}`}
+                    name={`remindBefore${day}Days`}
+                    checked={reminders[day]}
+                    disabled={isDisabled}
+                    onChange={() =>
+                      setReminders((prev) => ({
+                        ...prev,
+                        [day]: !prev[day],
+                      }))
+                    }
+                    className={`w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 ${
+                      isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                  <label
+                    htmlFor={`remind${day}`}
+                    className="text-sm text-gray-600"
+                  >
+                    {day} day{day > 1 && "s"}
+                  </label>
+                </div>
+              );
+            })}
           </div>
         </fieldset>
       </div>

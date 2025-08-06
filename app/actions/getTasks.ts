@@ -16,7 +16,9 @@ export type ProcessedTask = {
 
 export async function getTasks(
   userId: string
-): Promise<ProcessedTask[] | false> {
+): Promise<
+  { completeTasks: ProcessedTask[]; activeTasks: ProcessedTask[] } | false
+> {
   try {
     await dbConnect();
 
@@ -38,7 +40,10 @@ export async function getTasks(
       remindBefore7Days: task.remindBefore7Days,
     }));
 
-    return processedTasks;
+    const completeTasks = processedTasks.filter((task) => task.completed);
+    const activeTasks = processedTasks.filter((task) => !task.completed);
+
+    return { completeTasks, activeTasks };
   } catch (e) {
     console.error("Database Error: Failed to fetch tasks.", e);
     throw new Error("Failed to fetch tasks.");

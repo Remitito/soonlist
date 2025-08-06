@@ -16,6 +16,7 @@ type UpdateData = {
   remindBefore1Day: boolean;
   remindBefore3Days: boolean;
   remindBefore7Days: boolean;
+  completed: boolean;
 };
 
 export async function updateTask(

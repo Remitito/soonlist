@@ -4,11 +4,14 @@ import React, { useState, useEffect } from "react";
 import { ProcessedTask } from "../actions/getTasks";
 import { updateTask } from "../actions/updateTask";
 import { deleteTask } from "../actions/deleteTask";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
 import StatusPopup from "./StatusPopup";
 import DecisionPopup from "./DecisionPopup";
 
-type TaskWithStatus = ProcessedTask & { isDirty: boolean };
+type TaskWithStatus = ProcessedTask & {
+  isDirty: boolean;
+  originalValues: ProcessedTask;
+};
 
 interface ActiveTasksProps {
   tasks: ProcessedTask[];
@@ -18,7 +21,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
   const [activeTasks, setActiveTasks] = useState<TaskWithStatus[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<{
     id: string | null;
-    action: "save" | "delete" | null;
+    action: "save" | "delete" | "complete" | null;
   }>({ id: null, action: null });
   const [statusPopup, setStatusPopup] = useState<{
     message: string;
@@ -31,8 +34,27 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
     "w-full border border-gray-300 rounded-xl text-sm p-2 bg-white";
 
   useEffect(() => {
-    setActiveTasks(tasks.map((task) => ({ ...task, isDirty: false })));
+    setActiveTasks(
+      tasks.map((task) => ({
+        ...task,
+        isDirty: false,
+        originalValues: { ...task },
+      }))
+    );
   }, [tasks]);
+
+  const checkIsDirty = (
+    current: ProcessedTask,
+    original: ProcessedTask
+  ): boolean => {
+    return (
+      current.description !== original.description ||
+      current.deadline !== original.deadline ||
+      current.remindBefore1Day !== original.remindBefore1Day ||
+      current.remindBefore3Days !== original.remindBefore3Days ||
+      current.remindBefore7Days !== original.remindBefore7Days
+    );
+  };
 
   const updateTaskField = <K extends keyof ProcessedTask>(
     index: number,
@@ -40,10 +62,19 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
     value: ProcessedTask[K]
   ) => {
     const updatedTasks = [...activeTasks];
-    updatedTasks[index] = {
+    const updatedTask = {
       ...updatedTasks[index],
       [field]: value,
-      isDirty: true,
+    };
+
+    const isDirty = checkIsDirty(
+      updatedTask,
+      updatedTasks[index].originalValues
+    );
+
+    updatedTasks[index] = {
+      ...updatedTask,
+      isDirty,
     };
     setActiveTasks(updatedTasks);
   };
@@ -67,6 +98,32 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       remindBefore1Day: taskToSave.remindBefore1Day,
       remindBefore3Days: taskToSave.remindBefore3Days,
       remindBefore7Days: taskToSave.remindBefore7Days,
+      completed: taskToSave.completed,
+    });
+
+    if (result.message.startsWith("Success")) {
+      const updatedTasks = [...activeTasks];
+      updatedTasks[index] = {
+        ...updatedTasks[index],
+        isDirty: false,
+        originalValues: { ...updatedTasks[index] },
+      };
+      setActiveTasks(updatedTasks);
+    }
+
+    setStatusPopup({
+      message: result.message,
+      type: result.message.startsWith("Success") ? "success" : "error",
+    });
+    setIsSubmitting({ id: null, action: null });
+  };
+
+  const handleComplete = async (index: number) => {
+    const taskToComplete = activeTasks[index];
+    setIsSubmitting({ id: taskToComplete._id, action: "complete" });
+    const result = await updateTask(taskToComplete._id, {
+      ...taskToComplete,
+      completed: true,
     });
 
     setStatusPopup({
@@ -208,8 +265,8 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
               <button
                 onClick={() => handleSave(index)}
                 disabled={!task.isDirty || isSubmitting.id === task._id}
-                className={`flex-1 lg:flex-none flex bg-blue-500 items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
-                  task.isDirty
+                className={`flex-1 w-32 lg:flex-none flex bg-blue-500 items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
+                  task.isDirty && isSubmitting.id !== task._id
                     ? "cursor-pointer hover:bg-blue-600"
                     : "opacity-60 cursor-not-allowed"
                 } disabled:opacity-50`}
@@ -220,9 +277,28 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                   : "Save"}
               </button>
               <button
+                onClick={() => handleComplete(index)}
+                disabled={task.isDirty || isSubmitting.id === task._id}
+                className={`flex-1 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
+                  !task.isDirty && isSubmitting.id !== task._id
+                    ? "cursor-pointer bg-yellow-500 hover:bg-yellow-600"
+                    : "opacity-60 cursor-not-allowed bg-yellow-400"
+                } disabled:opacity-50`}
+              >
+                <FaThumbsUp />
+                {isSubmitting.id === task._id &&
+                isSubmitting.action === "complete"
+                  ? "Completing..."
+                  : "Complete"}
+              </button>
+              <button
                 onClick={() => handleDelete(index)}
-                disabled={isSubmitting.id === task._id}
-                className="flex-1 lg:flex-none flex items-center cursor-pointer text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-50"
+                disabled={task.isDirty || isSubmitting.id === task._id}
+                className={`flex-1 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
+                  !task.isDirty && isSubmitting.id !== task._id
+                    ? "cursor-pointer bg-red-500 hover:bg-red-600"
+                    : "opacity-60 cursor-not-allowed bg-red-400"
+                } disabled:opacity-50`}
               >
                 <FaTrash />
                 {isSubmitting.id === task._id &&

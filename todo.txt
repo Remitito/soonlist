@@ -1,9 +1,2 @@
-- Mongodb done
-- Authjs done
-- Server action for saving tasks done
-- Server action for getting tasks done
-- Client side
-- Email reminder function
-- Cron job
-- Deploy + buy domain (see if email is cheap)
-- Change nodemailer email
+- Horizontal scroll
+- Only allow most recent completed tasks
