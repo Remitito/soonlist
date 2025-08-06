@@ -1,14 +1,33 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
+export interface IReminderSetting {
+  remind: boolean;
+  done: boolean;
+}
+
 export interface ITask extends Document {
   description: string;
   completed: boolean;
   deadline: Date;
-  remindBefore1Day: boolean;
-  remindBefore3Days: boolean;
-  remindBefore7Days: boolean;
+  remindBefore1Days: IReminderSetting;
+  remindBefore3Days: IReminderSetting;
+  remindBefore7Days: IReminderSetting;
   user: mongoose.Schema.Types.ObjectId;
 }
+
+const reminderSchema = new Schema<IReminderSetting>(
+  {
+    remind: {
+      type: Boolean,
+      default: false,
+    },
+    done: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false }
+);
 
 const taskSchema: Schema<ITask> = new Schema(
   {
@@ -30,18 +49,17 @@ const taskSchema: Schema<ITask> = new Schema(
       type: Date,
       required: [true, "A deadline is required."],
     },
-    // Booleans to indicate if a user wants a reminder N days *before* the deadline
-    remindBefore1Day: {
-      type: Boolean,
-      default: false,
+    remindBefore1Days: {
+      type: reminderSchema,
+      default: { remind: false, done: false },
     },
     remindBefore3Days: {
-      type: Boolean,
-      default: false,
+      type: reminderSchema,
+      default: { remind: false, done: false },
     },
     remindBefore7Days: {
-      type: Boolean,
-      default: false,
+      type: reminderSchema,
+      default: { remind: false, done: false },
     },
   },
   {

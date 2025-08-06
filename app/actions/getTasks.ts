@@ -9,7 +9,7 @@ export type ProcessedTask = {
   description: string;
   completed: boolean;
   deadline: string;
-  remindBefore1Day: boolean;
+  remindBefore1Days: boolean;
   remindBefore3Days: boolean;
   remindBefore7Days: boolean;
 };
@@ -35,9 +35,9 @@ export async function getTasks(
       description: task.description,
       completed: task.completed,
       deadline: task.deadline.toISOString(),
-      remindBefore1Day: task.remindBefore1Day,
-      remindBefore3Days: task.remindBefore3Days,
-      remindBefore7Days: task.remindBefore7Days,
+      remindBefore1Days: task.remindBefore1Days.remind,
+      remindBefore3Days: task.remindBefore3Days.remind,
+      remindBefore7Days: task.remindBefore7Days.remind,
     }));
 
     const completeTasks = processedTasks.filter((task) => task.completed);

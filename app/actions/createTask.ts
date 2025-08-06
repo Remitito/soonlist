@@ -23,9 +23,18 @@ export async function createTask(formData: FormData): Promise<FormState> {
   const taskData = {
     description: rawData.description as string,
     deadline: new Date(rawData.deadline as string),
-    remindBefore1Day: rawData.remindBefore1Day === "on",
-    remindBefore3Days: rawData.remindBefore3Days === "on",
-    remindBefore7Days: rawData.remindBefore7Days === "on",
+    remindBefore1Days: {
+      remind: rawData.remindBefore1Days === "on",
+      done: false,
+    },
+    remindBefore3Days: {
+      remind: rawData.remindBefore3Days === "on",
+      done: false,
+    },
+    remindBefore7Days: {
+      remind: rawData.remindBefore7Days === "on",
+      done: false,
+    },
     user: session.user.id,
     completed: false,
   };

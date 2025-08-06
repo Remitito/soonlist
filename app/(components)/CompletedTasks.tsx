@@ -7,7 +7,7 @@ interface CompletedTasksProps {
 
 const CompletedTasks: React.FC<CompletedTasksProps> = ({ tasks }) => {
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-8 ">
       <h2 className="text-3xl font-light mb-4">Recent Tasks</h2>
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {tasks.map((task, i) => (

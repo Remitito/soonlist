@@ -50,7 +50,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
     return (
       current.description !== original.description ||
       current.deadline !== original.deadline ||
-      current.remindBefore1Day !== original.remindBefore1Day ||
+      current.remindBefore1Days !== original.remindBefore1Days ||
       current.remindBefore3Days !== original.remindBefore3Days ||
       current.remindBefore7Days !== original.remindBefore7Days
     );
@@ -95,7 +95,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
     const result = await updateTask(taskToSave._id, {
       description: taskToSave.description,
       deadline: taskToSave.deadline,
-      remindBefore1Day: taskToSave.remindBefore1Day,
+      remindBefore1Days: taskToSave.remindBefore1Days,
       remindBefore3Days: taskToSave.remindBefore3Days,
       remindBefore7Days: taskToSave.remindBefore7Days,
       completed: taskToSave.completed,
@@ -217,11 +217,11 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
-                      checked={task.remindBefore1Day}
+                      checked={task.remindBefore1Days}
                       onChange={(e) =>
                         updateTaskField(
                           index,
-                          "remindBefore1Day",
+                          "remindBefore1Days",
                           e.target.checked
                         )
                       }
