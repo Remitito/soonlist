@@ -4,7 +4,7 @@ import { inter } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Soonlist",
-  description: "Your simple deadline list with just the reminders you need.",
+  description: "Your simple deadline list with only the reminders you need.",
 };
 
 export default function RootLayout({

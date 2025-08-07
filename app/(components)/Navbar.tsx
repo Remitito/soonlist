@@ -43,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({ loggedIn }) => {
         <div className="h-full flex md:items-start items-start mt-10  md:mt-20">
           {loggedIn ? (
             <button
-              className="flex items-center text-xs md:text-sm gap-2 bg-black/80 text-white px-4 py-2 rounded-lg shadow-md hover:bg-black transition duration-200"
+              className="flex cursor-pointer items-center text-xs md:text-sm gap-2 bg-black/80 text-white px-4 py-2 rounded-lg shadow-md hover:bg-black transition duration-200"
               onClick={() => signOut()}
             >
               <FaSignOutAlt />
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ loggedIn }) => {
             </button>
           ) : (
             <button
-              className="flex items-center gap-2 bg-black/80 text-white px-4 py-2 rounded-lg shadow-md hover:bg-black transition duration-200"
+              className="flex items-center cursor-pointer gap-2 bg-black/80 text-white px-4 py-2 rounded-lg shadow-md hover:bg-black transition duration-200"
               onClick={() => setLoginPopupIsOpen(true)}
             >
               <FaUser />

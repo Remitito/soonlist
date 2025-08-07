@@ -249,6 +249,9 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                           checked={
                             task[fieldName as keyof ProcessedTask] as boolean
                           }
+                          className={
+                            isDisabled ? "cursor-not-allowed opacity-50" : ""
+                          }
                           disabled={isDisabled}
                           onChange={(e) =>
                             updateTaskField(

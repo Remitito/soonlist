@@ -55,6 +55,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
   } | null>(null);
 
   const handleSubmit = async () => {
+    if (!description) {
+      setStatusPopup({ message: "Please add a description", type: "error" });
+      return;
+    }
+
     if (!loggedIn) {
       setLoginPopupIsOpen(true);
       return;
@@ -111,7 +116,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
       let hasChanges = false;
 
       [1, 3, 7].forEach((day) => {
-        if (daysUntilDeadline < day && prev[day]) {
+        const isPastReminder =
+          day === 1 ? daysUntilDeadline <= day : daysUntilDeadline < day;
+
+        if (isPastReminder && prev[day]) {
           updated[day] = false;
           hasChanges = true;
         }
