@@ -5,7 +5,7 @@ import { createTask } from "../actions/createTask";
 import { FiSave } from "react-icons/fi";
 import StatusPopup from "./StatusPopup";
 import LoginPopup from "./LoginPopup";
-import { checkIfToday, getDaysUntilDeadline } from "../utils/All";
+import { checkIfToday, getDaysUntilDeadline } from "../utils/DateStuff";
 
 const containerStyles = "w-full mx-auto bg-gray-100 shadow-sm p-6 md:p-8";
 const headingStyles =

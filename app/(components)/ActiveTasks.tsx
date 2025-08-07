@@ -7,7 +7,7 @@ import { deleteTask } from "../actions/deleteTask";
 import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
 import StatusPopup from "./StatusPopup";
 import DecisionPopup from "./DecisionPopup";
-import { getDaysUntilDeadline } from "../utils/All";
+import { getDaysUntilDeadline } from "../utils/DateStuff";
 
 type TaskWithStatus = ProcessedTask & {
   isDirty: boolean;

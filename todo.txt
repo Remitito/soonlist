@@ -1,2 +1,2 @@
-- Horizontal scroll
+- No description should be a client side warning
 - Only allow most recent completed tasks

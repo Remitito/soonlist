@@ -9,10 +9,9 @@ export function checkIfToday(date: Date): boolean {
   return new Date(date).toDateString() === new Date().toDateString();
 }
 
-export const getDaysUntilDeadline = (deadline: string) => {
+export const getDaysUntilDeadline = (deadline: Date | string): number => {
   const today = new Date();
   const deadlineDate = new Date(deadline);
   const diffTime = deadlineDate.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
