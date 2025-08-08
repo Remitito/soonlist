@@ -152,6 +152,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
             id="description"
             type="text"
             name="description"
+            maxLength={50}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Cancel trial / Submit thesis"

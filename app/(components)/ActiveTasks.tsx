@@ -8,10 +8,12 @@ import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
 import StatusPopup from "./StatusPopup";
 import DecisionPopup from "./DecisionPopup";
 import { getDaysUntilDeadline } from "../utils/DateStuff";
+import { TaskDisplay } from "./TaskDisplay";
 
-type TaskWithStatus = ProcessedTask & {
+export type TaskWithStatus = ProcessedTask & {
   isDirty: boolean;
   originalValues: ProcessedTask;
+  editing: boolean;
 };
 
 interface ActiveTasksProps {
@@ -41,6 +43,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       tasks.map((task) => ({
         ...task,
         isDirty: false,
+        editing: false,
         originalValues: { ...task },
       }))
     );
@@ -96,11 +99,30 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
     setActiveTasks(updatedTasks);
   };
 
-  const handleSave = async (index: number) => {
-    const taskToSave = activeTasks[index];
-    if (!taskToSave.isDirty) return;
+  const handleEditSave = async (index: number) => {
+    const task = activeTasks[index];
 
-    if (!taskToSave.description.trim()) {
+    if (!task.editing) {
+      const updatedTasks = [...activeTasks];
+      updatedTasks[index] = {
+        ...updatedTasks[index],
+        editing: true,
+      };
+      setActiveTasks(updatedTasks);
+      return;
+    }
+
+    if (!task.isDirty) {
+      const updatedTasks = [...activeTasks];
+      updatedTasks[index] = {
+        ...updatedTasks[index],
+        editing: false,
+      };
+      setActiveTasks(updatedTasks);
+      return;
+    }
+
+    if (!task.description.trim()) {
       setStatusPopup({
         message: "Description cannot be empty.",
         type: "error",
@@ -108,14 +130,14 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       return;
     }
 
-    setIsSubmitting({ id: taskToSave._id, action: "save" });
-    const result = await updateTask(taskToSave._id, {
-      description: taskToSave.description,
-      deadline: taskToSave.deadline,
-      remindBefore1Days: taskToSave.remindBefore1Days,
-      remindBefore3Days: taskToSave.remindBefore3Days,
-      remindBefore7Days: taskToSave.remindBefore7Days,
-      completed: taskToSave.completed,
+    setIsSubmitting({ id: task._id, action: "save" });
+    const result = await updateTask(task._id, {
+      description: task.description,
+      deadline: task.deadline,
+      remindBefore1Days: task.remindBefore1Days,
+      remindBefore3Days: task.remindBefore3Days,
+      remindBefore7Days: task.remindBefore7Days,
+      completed: task.completed,
     });
 
     if (result.message.startsWith("Success")) {
@@ -123,6 +145,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       updatedTasks[index] = {
         ...updatedTasks[index],
         isDirty: false,
+        editing: false,
         originalValues: { ...updatedTasks[index] },
       };
       setActiveTasks(updatedTasks);
@@ -182,100 +205,26 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
         onCancel={() => setDeletionTargetId(null)}
       />
 
-      <h2 className="text-3xl font-light mb-4">Active Tasks</h2>
-      <div className="flex flex-col items-center w-full space-y-4">
+      <h2 className="text-3xl font-light mb-8">Active Tasks</h2>
+      <div className="flex flex-col items-center w-full space-y-2">
         {activeTasks.map((task, index) => (
           <div
             key={task._id}
-            className="w-full flex flex-col lg:flex-row lg:items-center gap-4 p-4 "
+            className="w-full  flex flex-col lg:flex-row lg:items-center p-4 "
           >
-            {/* Inputs */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <label
-                  htmlFor={`desc-${task._id}`}
-                  className="text-xs font-medium text-gray-500 mb-1"
-                >
-                  Description
-                </label>
-                <input
-                  id={`desc-${task._id}`}
-                  type="text"
-                  className={inputStyle}
-                  value={task.description}
-                  onChange={(e) =>
-                    updateTaskField(index, "description", e.target.value)
-                  }
-                />
-              </div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor={`date-${task._id}`}
-                  className="text-xs font-medium text-gray-500 mb-1"
-                >
-                  Deadline
-                </label>
-                <input
-                  id={`date-${task._id}`}
-                  type="date"
-                  className={inputStyle}
-                  min={tomorrowString}
-                  value={task.deadline.slice(0, 10)}
-                  onChange={(e) => {
-                    updateTaskField(index, "deadline", e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex flex-col md:col-span-2 lg:col-span-1">
-                <label className="text-xs font-medium text-gray-500 mb-1">
-                  Reminders
-                </label>
-                <div className="flex flex-row flex-wrap gap-x-4 gap-y-2 items-center min-h-[40px]">
-                  {[1, 3, 7].map((day) => {
-                    const fieldName = `remindBefore${day}Days`;
-                    const daysUntilDeadline = getDaysUntilDeadline(
-                      task.deadline
-                    );
-                    const isDisabled =
-                      daysUntilDeadline < day ||
-                      (day === 1 && daysUntilDeadline === 1);
-                    return (
-                      <label
-                        key={day}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={
-                            task[fieldName as keyof ProcessedTask] as boolean
-                          }
-                          className={
-                            isDisabled ? "cursor-not-allowed opacity-50" : ""
-                          }
-                          disabled={isDisabled}
-                          onChange={(e) =>
-                            updateTaskField(
-                              index,
-                              fieldName as keyof ProcessedTask,
-                              e.target.checked
-                            )
-                          }
-                        />
-                        {day} Day{day > 1 ? "s" : ""}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Buttons */}
+            <TaskDisplay
+              task={task}
+              index={index}
+              updateTaskField={updateTaskField}
+              tomorrowString={tomorrowString}
+              inputStyle={inputStyle}
+            />
             <div className="w-full lg:w-auto flex flex-row sm:flex-row lg:flex-col xl:flex-row gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-gray-200 lg:pl-4">
               <button
-                onClick={() => handleSave(index)}
-                disabled={!task.isDirty || isSubmitting.id === task._id}
+                onClick={() => handleEditSave(index)}
+                disabled={isSubmitting.id === task._id}
                 className={`flex-1 w-32 lg:flex-none flex bg-blue-500 items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
-                  task.isDirty && isSubmitting.id !== task._id
+                  isSubmitting.id !== task._id
                     ? "cursor-pointer hover:bg-blue-600"
                     : "opacity-60 cursor-not-allowed"
                 } disabled:opacity-50`}
@@ -283,15 +232,15 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
                 <FaEdit />
                 {isSubmitting.id === task._id && isSubmitting.action === "save"
                   ? "Saving..."
-                  : task.isDirty
+                  : task.editing
                   ? "Save"
-                  : "Saved"}
+                  : "Edit"}
               </button>
               <button
                 onClick={() => handleComplete(index)}
-                disabled={task.isDirty || isSubmitting.id === task._id}
+                disabled={task.editing || isSubmitting.id === task._id}
                 className={`flex-1 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
-                  !task.isDirty && isSubmitting.id !== task._id
+                  !task.editing && isSubmitting.id !== task._id
                     ? "cursor-pointer bg-yellow-500 hover:bg-yellow-600"
                     : "opacity-60 cursor-not-allowed bg-yellow-400"
                 } disabled:opacity-50`}
@@ -304,9 +253,9 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
               </button>
               <button
                 onClick={() => handleDelete(index)}
-                disabled={task.isDirty || isSubmitting.id === task._id}
+                disabled={task.editing || isSubmitting.id === task._id}
                 className={`flex-1 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white font-semibold transition-colors ${
-                  !task.isDirty && isSubmitting.id !== task._id
+                  !task.editing && isSubmitting.id !== task._id
                     ? "cursor-pointer bg-red-500 hover:bg-red-600"
                     : "opacity-60 cursor-not-allowed bg-red-400"
                 } disabled:opacity-50`}
