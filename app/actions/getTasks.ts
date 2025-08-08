@@ -23,7 +23,7 @@ export async function getTasks(
     await dbConnect();
 
     const tasks = await Task.find({ user: new Types.ObjectId(userId) })
-      .sort({ createdAt: -1 })
+      .sort({ deadline: 1 })
       .lean();
 
     if (!tasks || tasks.length === 0) {

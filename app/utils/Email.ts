@@ -37,13 +37,13 @@ export async function sendEmail(
   const mailOptions = {
     from: process.env.EMAIL_SERVER_USER,
     to: email,
-    subject: `Soonlist Reminders for ${name}`,
+    subject: `Deadline Desk Reminders for ${name}`,
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
         <h2 style="color: #0057D9;">Hey ${name},</h2>
         <p style="font-size: 16px;">Here are your upcoming task reminders:</p>
         <ul style="padding-left: 20px; font-size: 15px;">${taskSummary}</ul>
-          <p style="font-size: 16px;">Thanks for using Soonlist!</p>
+          <p style="font-size: 16px;">Thanks for using Deadline Desk!</p>
 
       </div>
     `,

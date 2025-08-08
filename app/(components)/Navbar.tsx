@@ -22,23 +22,31 @@ const Navbar: React.FC<NavbarProps> = ({ loggedIn }) => {
       <div className="absolute inset-0 bg-black opacity-20 z-0" />
 
       <div className="relative h-full z-40 w-full flex justify-between items-center">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-row text-center items-center gap-2">
             <h1
-              className={`${roboto.className} text-white text-4xl md:text-6xl font-bold`}
+              className={`${roboto.className} text-white underline text-2xl sm:text-4xl md:text-5xl font-bold`}
             >
-              SOONLIST
+              DEADLINE DESK
             </h1>
             <Image
-              alt="Soonlist Logo"
+              alt="Deadline Desk Logo"
               src="/soonlist.png"
+              className="md:flex hidden"
               height={60}
               width={60}
             />
           </div>
-          <h2 className="italic text-[14px] md:text-[26px] font-extralight text-white ">
+          <h2 className=" text-[14px] md:text-[20px] font-light text-gray-200 ">
             Only the reminders you need
           </h2>
+          <Image
+            alt="Deadline Desk Logo"
+            src="/soonlist.png"
+            className="mt-2 flex md:hidden"
+            height={40}
+            width={40}
+          />
         </div>
         <div className="h-full flex md:items-start items-start mt-10  md:mt-20">
           {loggedIn ? (

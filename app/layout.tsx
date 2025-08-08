@@ -3,7 +3,7 @@ import "./globals.css";
 import { inter } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "Soonlist",
+  title: "Deadline Desk",
   description: "Your simple deadline list with only the reminders you need.",
 };
 
