@@ -16,6 +16,12 @@ interface TaskReminderInfo {
 }
 
 export async function GET() {
+  const authHeader = req.headers.get("x-cron-secret");
+  if (authHeader !== process.env.CRON_SECRET) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+    });
+  }
   await dbConnect();
 
   const tasks = await Task.find({
@@ -71,7 +77,7 @@ export async function GET() {
 
     const taskInfo: TaskReminderInfo = {
       id: (task._id as { toString: () => string }).toString(),
-      user: userObj?.name ?? "Unknown",
+      user: userObj?.name ?? userObj?.email.split("@")[0],
       email: userObj?.email ?? "unknown@example.com",
       userId: userObj?._id?.toString() ?? "",
       description: task.description,

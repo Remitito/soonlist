@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/lib/models/Task";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const authHeader = req.headers.get("x-cron-secret");
+  if (authHeader !== process.env.CRON_SECRET) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+    });
+  }
   try {
     await dbConnect();
 
