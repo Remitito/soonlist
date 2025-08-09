@@ -15,7 +15,7 @@ interface TaskReminderInfo {
   dueReminders: string[];
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const authHeader = req.headers.get("x-cron-secret");
   if (authHeader !== process.env.CRON_SECRET) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
