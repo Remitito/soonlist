@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/lib/models/Task";
 
-export async function GET(request: Request) {
-  const vercelHeader = request.headers.get("x-vercel-cron");
-  if (vercelHeader !== "1") {
-    return new Response("Unauthorized", { status: 401 });
-  }
+export async function GET() {
   try {
     await dbConnect();
 
