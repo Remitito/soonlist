@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { inter } from "./fonts";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Deadline Desk",
@@ -18,6 +19,7 @@ export default function RootLayout({
         className={`${inter.className} text-main-text bg-background antialiased w-full overflow-x-hidden flex justify-center flex-col`}
       >
         <div className="flex w-full flex-col">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
