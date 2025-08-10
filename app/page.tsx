@@ -18,7 +18,10 @@ export default async function Home() {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <Navbar loggedIn={session ? true : false} />
+      <Navbar
+        email={session?.user?.email || ""}
+        loggedIn={session ? true : false}
+      />
       <HomeClient
         activeTasks={activeTasks}
         completeTasks={completeTasks}

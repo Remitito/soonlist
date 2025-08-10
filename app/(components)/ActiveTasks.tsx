@@ -210,15 +210,17 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
         onConfirm={confirmDelete}
         onCancel={() => setDeletionTargetId(null)}
       />
-      <div className="mb-8 w-full flex flex-row">
-        <h2 className="text-3xl font-light ">Upcoming Deadlines</h2>
+      <div className="mb-4 md:mb-8 w-full flex flex-row items-center">
+        <h2 className="text-2xl md:text-3xl w-5/6 md:w-auto font-light">
+          Upcoming Deadlines
+        </h2>
         {!showTaskForm && (
           <button
-            className={`cursor-pointer sm:hover:bg-green-600 flex-1 ml-8 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white bg-green-500 font-semibold transition-colors`}
+            className={`cursor-pointer sm:hover:bg-green-600 mr-20 md:mr-0 flex-1 ml-8 md:flex-none h-10 md:h-auto flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white bg-green-500 font-semibold transition-colors`}
             onClick={() => setShowTaskForm(true)}
           >
             <FaPlus />
-            Add New
+            New
           </button>
         )}
       </div>
@@ -226,7 +228,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
         {activeTasks.map((task, index) => (
           <div
             key={task._id}
-            className="w-full  flex flex-col lg:flex-row lg:items-center p-4 "
+            className="w-full flex flex-col lg:flex-row lg:items-center p-4 "
           >
             <TaskDisplay
               task={task}
