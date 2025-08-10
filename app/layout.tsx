@@ -15,9 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} text-main-text bg-background antialiased min-h-screen w-full overflow-x-hidden flex justify-center flex-col`}
+        className={`${inter.className} text-main-text bg-background antialiased w-full overflow-x-hidden flex justify-center flex-col`}
       >
-        <div className="flex w-full justify-center">{children}</div>
+        <div className="flex w-full flex-col">{children}</div>
       </body>
     </html>
   );

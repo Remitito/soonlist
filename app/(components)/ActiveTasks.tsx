@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ProcessedTask } from "../actions/getTasks";
 import { updateTask } from "../actions/updateTask";
 import { deleteTask } from "../actions/deleteTask";
-import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
+import { FaEdit, FaTrash, FaThumbsUp, FaPlus } from "react-icons/fa";
 import StatusPopup from "./StatusPopup";
 import DecisionPopup from "./DecisionPopup";
 import { getDaysUntilDeadline } from "../utils/DateStuff";
@@ -18,9 +18,15 @@ export type TaskWithStatus = ProcessedTask & {
 
 interface ActiveTasksProps {
   tasks: ProcessedTask[];
+  setShowTaskForm: (val: boolean) => void;
+  showTaskForm: boolean;
 }
 
-const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
+const ActiveTasks: React.FC<ActiveTasksProps> = ({
+  tasks,
+  setShowTaskForm,
+  showTaskForm,
+}) => {
   const [activeTasks, setActiveTasks] = useState<TaskWithStatus[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<{
     id: string | null;
@@ -204,8 +210,18 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
         onConfirm={confirmDelete}
         onCancel={() => setDeletionTargetId(null)}
       />
-
-      <h2 className="text-3xl font-light mb-8">Active Tasks</h2>
+      <div className="mb-8 w-full flex flex-row">
+        <h2 className="text-3xl font-light ">Upcoming Deadlines</h2>
+        {!showTaskForm && (
+          <button
+            className={`cursor-pointer sm:hover:bg-green-600 flex-1 ml-8 lg:flex-none w-32 flex items-center text-sm justify-center gap-2 px-4 py-2 rounded-full text-white bg-green-500 font-semibold transition-colors`}
+            onClick={() => setShowTaskForm(true)}
+          >
+            <FaPlus />
+            Add New
+          </button>
+        )}
+      </div>
       <div className="flex flex-col items-center w-full space-y-2">
         {activeTasks.map((task, index) => (
           <div
@@ -272,7 +288,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ tasks }) => {
       </div>
       {activeTasks.length === 0 && (
         <div className="text-gray-500 text-center mt-8">
-          No active tasks available.
+          No upcoming deadlines available.
         </div>
       )}
     </div>

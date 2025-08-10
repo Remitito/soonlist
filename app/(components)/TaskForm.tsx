@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { createTask } from "../actions/createTask";
-import { FiSave } from "react-icons/fi";
+import { FiSave, FiXCircle } from "react-icons/fi";
 import StatusPopup from "./StatusPopup";
 import LoginPopup from "./LoginPopup";
 import { checkIfToday, getDaysUntilDeadline } from "../utils/DateStuff";
@@ -21,18 +21,19 @@ const inputStyles = `
 `;
 const buttonWrapperStyles = "mt-8 flex justify-center";
 const buttonStyles = `
-  flex items-center gap-2 px-7 py-2.5 text-white bg-green-500 
-  font-semibold rounded-full shadow-md hover:bg-green-600 
-  focus:outline-none focus:ring-4 focus:ring-green-300 
+  flex items-center gap-2 px-7 py-2 
+  font-semibold rounded-full shadow-md   
+  focus:outline-none focus:ring-4 
   disabled:bg-gray-400 disabled:cursor-not-allowed
   transition-all duration-300 cursor-pointer
 `;
 
 interface TaskFormProps {
   loggedIn: boolean;
+  setShowTaskForm: (val: boolean) => void;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ loggedIn, setShowTaskForm }) => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowString = tomorrow.toISOString().split("T")[0];
@@ -89,6 +90,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
       setDeadline(tomorrowString);
       setReminders({ 1: false, 3: false, 7: false });
       localStorage.removeItem("taskFormDraft");
+      setShowTaskForm(false);
     }
   };
 
@@ -140,13 +142,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
       )}
 
       <h2 className={headingStyles}>
-        Create a new task and setup email reminders in seconds...
+        Create a new deadline and setup email reminders in seconds...
       </h2>
 
       <div className={formContainerStyles}>
         <div className={`${formGroupStyles} md:w-2/5`}>
           <label htmlFor="description" className={labelStyles}>
-            Task Description
+            Description
           </label>
           <input
             id="description"
@@ -214,16 +216,27 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn }) => {
           </div>
         </fieldset>
       </div>
-
-      <div className={buttonWrapperStyles}>
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className={buttonStyles}
-        >
-          <FiSave className="w-5 h-5" />
-          {isSubmitting ? "Saving..." : "Save"}
-        </button>
+      <div className="flex flex-row w-full items-center justify-center space-x-6">
+        <div className={buttonWrapperStyles}>
+          <button
+            onClick={() => setShowTaskForm(false)}
+            disabled={isSubmitting}
+            className={`${buttonStyles} bg-red-500 hover:bg-red-600 text-white focus:ring-red-300`}
+          >
+            <FiXCircle className="w-5 h-5" />
+            Close
+          </button>
+        </div>
+        <div className={buttonWrapperStyles}>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className={`${buttonStyles} bg-green-500 hover:bg-green-600 text-white focus:ring-green-300`}
+          >
+            <FiSave className="w-5 h-5" />
+            {isSubmitting ? "Saving..." : "Save"}
+          </button>
+        </div>
       </div>
 
       <LoginPopup
