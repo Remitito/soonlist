@@ -82,9 +82,6 @@ export default function AccountManagement({
           </div>
 
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <h3 className="text-sm font-medium text-red-800 mb-2">
-              Danger Zone
-            </h3>
             <p className="text-sm text-red-700 mb-4">
               Permanently delete your account and all associated data. This
               action cannot be undone.

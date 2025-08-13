@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { getTasks, ProcessedTask } from "./actions/getTasks";
-import Navbar from "./(components)/Navbar";
 import HomeClient from "./HomeClient";
 
 export default async function Home() {
@@ -17,16 +16,10 @@ export default async function Home() {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <Navbar
-        email={session?.user?.email || ""}
-        loggedIn={session ? true : false}
-      />
-      <HomeClient
-        activeTasks={activeTasks}
-        completeTasks={completeTasks}
-        loggedIn={session ? true : false}
-      />
-    </div>
+    <HomeClient
+      activeTasks={activeTasks}
+      completeTasks={completeTasks}
+      loggedIn={session ? true : false}
+    />
   );
 }
