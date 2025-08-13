@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.deadlinedesk.com/
+
+# Sitemaps
+Sitemap: https://www.deadlinedesk.com/sitemap.xml
