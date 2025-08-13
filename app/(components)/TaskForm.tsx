@@ -53,6 +53,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn, setShowTaskForm }) => {
   const [statusPopup, setStatusPopup] = useState<{
     message: string;
     type: "success" | "error";
+    time?: number;
   } | null>(null);
 
   const handleSubmit = async () => {
@@ -83,6 +84,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn, setShowTaskForm }) => {
     setStatusPopup({
       message: result.message,
       type: result.message.startsWith("Success") ? "success" : "error",
+      time: result.reminders ? 5000 : 3000,
     });
 
     if (result.message.startsWith("Success")) {
@@ -90,7 +92,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn, setShowTaskForm }) => {
       setDeadline(tomorrowString);
       setReminders({ 1: false, 3: false, 7: false });
       localStorage.removeItem("taskFormDraft");
-      setShowTaskForm(false);
     }
   };
 
@@ -136,6 +137,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ loggedIn, setShowTaskForm }) => {
       {statusPopup && (
         <StatusPopup
           message={statusPopup.message}
+          time={statusPopup.time}
           type={statusPopup.type}
           onClose={() => setStatusPopup(null)}
         />

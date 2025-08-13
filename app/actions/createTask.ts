@@ -3,7 +3,6 @@
 import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/lib/models/Task";
-import { revalidatePath } from "next/cache";
 
 export type FormState = {
   message: string;
@@ -11,6 +10,7 @@ export type FormState = {
     description?: string[];
     deadline?: string[];
   };
+  reminders?: boolean;
 };
 
 export async function createTask(formData: FormData): Promise<FormState> {
@@ -45,8 +45,15 @@ export async function createTask(formData: FormData): Promise<FormState> {
     console.error(e);
     return { message: "Database Error: Failed to create task." };
   }
+  const reminders =
+    taskData.remindBefore1Days.remind ||
+    taskData.remindBefore3Days.remind ||
+    taskData.remindBefore7Days.remind;
 
-  revalidatePath("/");
-
-  return { message: "Success! Task created." };
+  return {
+    message: `Success! Task created. ${
+      reminders ? `Reminders will be sent to ${session.user.email}` : ""
+    }`,
+    reminders: reminders,
+  };
 }

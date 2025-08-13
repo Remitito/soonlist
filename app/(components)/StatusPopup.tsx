@@ -7,17 +7,22 @@ interface StatusPopupProps {
   message: string;
   type: "success" | "error";
   onClose: () => void;
+  time?: number;
 }
 
 const StatusPopup: React.FC<StatusPopupProps> = ({
   message,
   type,
   onClose,
+  time,
 }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, 3000);
+    const timer = setTimeout(
+      () => {
+        onClose();
+      },
+      time ? time : 3000
+    );
 
     return () => {
       clearTimeout(timer);
